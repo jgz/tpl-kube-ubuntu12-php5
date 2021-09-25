@@ -14,7 +14,7 @@ RUN apt-get update && \
 
 COPY src/* /var/www/
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
-COPY run /usr/local/bin/entrypoint
+COPY entrypoint /usr/local/bin/entrypoint
 RUN chmod +x /usr/local/bin/entrypoint
 RUN a2enmod rewrite
 

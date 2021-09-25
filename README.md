@@ -1,3 +1,7 @@
-# tpl-kube-ubuntu14-php5
+# Template Project for PHP5 -> Kubernetes
 
-Template project for transitioning old PHP5 projects to Kubernetes
+This project serves as a template for transitioning old websites that require php5 to containers that can run in a modern kubernetes cluster.
+
+Local development is supported by docker compose.
+
+
