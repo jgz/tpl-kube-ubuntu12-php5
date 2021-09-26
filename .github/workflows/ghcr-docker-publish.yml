@@ -90,7 +90,7 @@ jobs:
           sed -i "s/PROJECT_NAME/$NAME/g" chart/Chart.yaml
           sed -i "s/RELEASE_VERSION/$VERSION/g" chart/Chart.yaml
           
-          TMPDIR=/tmp/helm-package/$NAME
+          TMPDIR=/tmp/helm-package/$NAME-chart
           mkdir -p $TMPDIR
           mkdir -p charts/
           cp -r chart/* $TMPDIR
