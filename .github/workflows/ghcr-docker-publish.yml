@@ -57,10 +57,20 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          
+      - name: Dump env
+        run: env | sort
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+          STEPS: ${{ toJson(steps)}}
+        run: | 
+          echo "$GITHUB_CONTEXT" \
+          echo "$STEPS"
 
       - name: Update Charts
         env: 
-          VERSION: ${{ steps.meta.outputs.labels["org.opencontainers.image.version"] }}
+          VERSION: ${{ steps.meta.outputs.labels.org.opencontainers.image.version }}
           REPO: ${{ steps.dotenv.outputs.repo }}
           REGISTRY: ${{ steps.dotenv.outputs.registry }}/
           NAME: ${{ steps.dotenv.outputs.project_name }}
