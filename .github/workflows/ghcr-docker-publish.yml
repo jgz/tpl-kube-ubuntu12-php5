@@ -92,15 +92,15 @@ jobs:
           
           TMPDIR=/tmp/helm-package/$NAME
           mkdir -p $TMPDIR
-          mkdir -p charts/$NAME
+          mkdir -p charts/
           cp -r chart/* $TMPDIR
 
-          helm package $TMPDIR -d .
+          helm package $TMPDIR -d charts/
 
       - name: Upload chart to release
         uses: JasonEtco/upload-to-release@master
         with:
-          args: ./${{ steps.dotenv.outputs.project_name }}-${{ steps.meta.outputs.version }}.tgz application/x-gzip
+          args: charts/${{ steps.dotenv.outputs.project_name }}-${{ steps.meta.outputs.version }}.tgz application/x-gzip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
