@@ -12,10 +12,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      
+      - name: Load Config to ENV
+        uses: falti/dotenv-action@v0.2.7
+        id: dotenv
+        path: release.config
+        log-variables: true
 
-      - name: Load Config
-        run: source release.config
-        
       - name: Dump env
         run: env | sort
       - name: Dump GitHub context
