@@ -34,30 +34,14 @@ jobs:
       - name: Load Release Config 
         id: dotenv
         uses: falti/dotenv-action@v0.2.7
-        with:
-          path: release.config
-          log-variables: true
-
-      - name: Set Versions
-        uses: actions/github-script@v5
-        id: set_version
-        with:
-          script: |
-            const tag = context.ref.substring(10)
-            const no_v = tag.replace('v', '')
-            const dash_index = no_v.lastIndexOf('-')
-            const no_dash = (dash_index > -1) ?  no_v.substring(0, dash_index) : no_v
-            core.setOutput('tag', tag)
-            core.setOutput('no-v', no_v)
-            core.setOutput('no-dash', no_dash)
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
       - name: Log into registry ${{ env.REGISTRY }}
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
+          registry: ${{ steps.dotenv.outputs.registry }}
+          username: ${{ steps.dotenv.outputs.repo }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # Extract metadata (tags, labels) for Docker
@@ -65,19 +49,21 @@ jobs:
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@3a3bb3a81753dc99f090d24ee7e5343838b73a96
+        env:
+          USER: ${{ steps.dotenv.outputs.repo }}
+          REGISTRY: ${{ steps.dotenv.outputs.registry }}
+          NAME: ${{ steps.dotenv.outputs.project_name }}
         with:
-          images: ${{ env.REGISTRY }}/${{ github.actor }}/${{ steps.dotenv.outputs.project_name }}
+          images: $REGISTRY/$USER/$NAME
+          tags: |
+            type=semver,pattern={{version}}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         uses: docker/build-push-action@a66e35b9cbcf4ad0ea91ffcaf7bbad63ad9e0229
-        env:
-          USER: ${{ steps.dotenv.outputs.repo }}
-          REGISTRY: ${{ steps.dotenv.outputs.registry }}
-          VERSION: type=semver,pattern={{version}}
         with:
           context: .
           push: true
-          tags: |
-            type=semver,pattern={{version}}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
