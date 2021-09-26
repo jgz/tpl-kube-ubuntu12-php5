@@ -119,9 +119,10 @@ jobs:
           REGISTRY: ${{ secrets.ECR_REGISTRY }}/
           NAME: ${{ steps.dotenv.outputs.project_name }}
           HOST: ${{ steps.dotenv.outputs.project_host }}
+          REGION: us-east-2
         run: |
           aws ecr get-login-password \
-            --region <aws-region> | helm registry login \
+            --region $REGION | helm registry login \
             --username AWS \
             --password-stdin $REGISTRY
           
