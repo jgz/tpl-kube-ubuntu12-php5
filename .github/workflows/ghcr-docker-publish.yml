@@ -97,12 +97,19 @@ jobs:
 
           helm package $TMPDIR -d charts/$NAME
 
-      
-
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.2.0
+      - name: Upload chart to release
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: $NAME-$VERSION.tgz
         env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          NAME: ${{ steps.dotenv.outputs.project_name }}
+          VERSION: ${{ steps.meta.outputs.version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Run chart-releaser
+      #   uses: helm/chart-releaser-action@v1.2.0
+      #   env:
+      #     CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       
 
