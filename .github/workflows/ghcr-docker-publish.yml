@@ -78,8 +78,8 @@ jobs:
         run: |
           sed -i "s/PROJECT_NAME/$NAME/g" chart/values.yaml 
           sed -i "s/REPO/$REPO/g" chart/values.yaml
-          sed -i "s/PROJECT_HOST/$HOST/g" chart/values.yaml
-          sed -i "s/REGISTRY/$REGISTRY/g" chart/values.yaml
+          sed -i "s?PROJECT_HOST?$HOST?g" chart/values.yaml
+          sed -i "s?REGISTRY?$REGISTRY?g" chart/values.yaml
           cat chart/values.yaml
 
           sed -i "s/PROJECT_NAME/$NAME/g" chart/Chart.yaml
