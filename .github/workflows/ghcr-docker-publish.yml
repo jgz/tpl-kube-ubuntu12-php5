@@ -79,4 +79,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: type=semver,pattern={{version}}
+          tags: |
+            type=semver,pattern={{version}}
