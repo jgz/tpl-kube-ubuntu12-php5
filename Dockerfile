@@ -14,9 +14,9 @@ RUN apt-get update && \
 
 COPY src/* /var/www/
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
-COPY entrypoint /usr/local/bin/entrypoint
-RUN chmod +x /usr/local/bin/entrypoint
+COPY entrypoint /entrypoint
+RUN chmod +x /entrypoint
 RUN a2enmod rewrite
 
 EXPOSE 80
-CMD ["/usr/local/bin/entrypoint"]
+ENTRYPOINT ["/entrypoint"]
