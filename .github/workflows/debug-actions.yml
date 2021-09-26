@@ -18,6 +18,24 @@ jobs:
         uses: falti/dotenv-action@v0.2.7
         with:
           log-variables: true
+    
+      - name: Update Charts
+        env: 
+          VERSION: ${{ steps.meta.outputs.labels["org.opencontainers.image.version"] }}
+          REPO: ${{ steps.dotenv.outputs.repo }}
+          REGISTRY: ${{ steps.dotenv.outputs.registry }}/
+          NAME: ${{ steps.dotenv.outputs.project_name }}
+          HOST: ${{ steps.dotenv.outputs.project_host }}
+        run: |
+          sed -i "s/PROJECT_NAME/$NAME/g" chart/values.yaml 
+          sed -i "s/REPO/$REPO/g" chart/values.yaml
+          sed -i "s/PROJECT_HOST/$HOST/g" chart/values.yaml
+          sed -i "s/REGISTRY/$REGISTRY/g" chart/values.yaml
+          cat chart/values.yaml
+
+          sed -i "s/PROJECT_NAME/$NAME/g" chart/Chart.yaml
+          sed -i "s/RELEASE_VERSION/$VERSION/g" chart/Chart.yaml
+          cat Chart.yaml
 
       - name: Dump env
         run: env | sort
