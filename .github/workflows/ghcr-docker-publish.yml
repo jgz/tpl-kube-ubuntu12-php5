@@ -68,8 +68,13 @@ jobs:
           echo "$GITHUB_CONTEXT" \
           echo "$STEPS"
 
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.7.0
+
       # Update the charts with the values from .env and the current job
-      - name: Update Charts
+      - name: Package Chart
         env: 
           VERSION: ${{ steps.meta.outputs.version }}
           REPO: ${{ steps.dotenv.outputs.repo }}
@@ -81,21 +86,21 @@ jobs:
           sed -i "s/REPO/$REPO/g" chart/values.yaml
           sed -i "s?PROJECT_HOST?$HOST?g" chart/values.yaml
           sed -i "s?REGISTRY?$REGISTRY?g" chart/values.yaml
-          cat chart/values.yaml
 
           sed -i "s/PROJECT_NAME/$NAME/g" chart/Chart.yaml
           sed -i "s/RELEASE_VERSION/$VERSION/g" chart/Chart.yaml
-          cat chart/Chart.yaml
+          
+          TMPDIR=/tmp/helm-package/$NAME
+          mkdir -p $TMPDIR
+          mkdir -p charts/$NAME
+          cp -r ../chart/* $TMPDIR
 
-      - name: Install Helm
-        uses: azure/setup-helm@v1
-        with:
-          version: v3.7.0
+          helm package $TMPDIR -d charts/$NAME
+
+      
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.2.0
-        with:
-          charts_dir: chart
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
