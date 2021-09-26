@@ -68,6 +68,7 @@ jobs:
           echo "$GITHUB_CONTEXT" \
           echo "$STEPS"
 
+      # Update the charts with the values from .env and the current job
       - name: Update Charts
         env: 
           VERSION: ${{ steps.meta.outputs.version }}
@@ -84,7 +85,7 @@ jobs:
 
           sed -i "s/PROJECT_NAME/$NAME/g" chart/Chart.yaml
           sed -i "s/RELEASE_VERSION/$VERSION/g" chart/Chart.yaml
-          cat Chart.yaml
+          cat chart/Chart.yaml
 
       - name: Install Helm
         uses: azure/setup-helm@v1
