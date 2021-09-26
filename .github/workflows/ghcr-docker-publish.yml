@@ -93,7 +93,7 @@ jobs:
           TMPDIR=/tmp/helm-package/$NAME
           mkdir -p $TMPDIR
           mkdir -p charts/$NAME
-          cp -r ../chart/* $TMPDIR
+          cp -r chart/* $TMPDIR
 
           helm package $TMPDIR -d charts/$NAME
 
