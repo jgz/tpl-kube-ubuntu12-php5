@@ -1,5 +1,5 @@
 apiVersion: v2
-name: PROJECT_NAME
+name: PROJECT_NAME-chart
 description: php5 template site from https://github.com/jgz/tpl-kube-ubuntu14-php5
 
 # A chart can be either an 'application' or a 'library' chart.
