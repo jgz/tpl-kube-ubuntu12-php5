@@ -39,7 +39,7 @@ jobs:
           log-variables: true
 
       - name: Set Versions
-        uses: actions/github-script@v4
+        uses: actions/github-script@v5
         id: set_version
         with:
           script: |
