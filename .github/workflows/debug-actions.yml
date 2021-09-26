@@ -14,10 +14,11 @@ jobs:
         uses: actions/checkout@v2
       
       - name: Load Config to ENV
-        uses: falti/dotenv-action@v0.2.7
         id: dotenv
-        path: release.config
-        log-variables: true
+        uses: falti/dotenv-action@v0.2.7
+        with:
+          path: release.config
+          log-variables: true
 
       - name: Dump env
         run: env | sort
