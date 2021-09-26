@@ -98,9 +98,9 @@ jobs:
           helm package $TMPDIR -d charts/
 
       - name: Upload chart to release
-        uses: JasonEtco/upload-to-release@master
+        uses: skx/github-action-publish-binaries@master
         with:
-          args: charts/${{ steps.dotenv.outputs.project_name }}-${{ steps.meta.outputs.version }}.tgz application/gzip
+          args: charts/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
