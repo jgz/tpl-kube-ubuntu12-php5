@@ -1,7 +1,8 @@
 version: "3.9"
 services:
-  php:
+  php5-site:
     build: .
+    image: jgz84/php5-site
     ports:
       - 8080:80
     volumes:
