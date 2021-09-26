@@ -17,7 +17,6 @@ jobs:
         id: dotenv
         uses: falti/dotenv-action@v0.2.7
         with:
-          path: release.config
           log-variables: true
 
       - name: Dump env

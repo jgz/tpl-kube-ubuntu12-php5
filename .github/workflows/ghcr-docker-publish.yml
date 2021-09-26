@@ -49,12 +49,8 @@ jobs:
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@3a3bb3a81753dc99f090d24ee7e5343838b73a96
-        env:
-          USER: ${{ steps.dotenv.outputs.repo }}
-          REGISTRY: ${{ steps.dotenv.outputs.registry }}
-          NAME: ${{ steps.dotenv.outputs.project_name }}
         with:
-          images: $REGISTRY/$USER/$NAME
+          images: ${{ steps.dotenv.outputs.registry }}/${{ steps.dotenv.outputs.repo }}/${{ steps.dotenv.outputs.project_name }}
           tags: |
             type=semver,pattern={{version}}
 
