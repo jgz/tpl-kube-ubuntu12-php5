@@ -100,7 +100,7 @@ jobs:
       - name: Upload chart to release
         uses: JasonEtco/upload-to-release@master
         with:
-          args: ${{ steps.dotenv.outputs.project_name }}-${{ steps.meta.outputs.version }}.tgz
+          args: ./${{ steps.dotenv.outputs.project_name }}-${{ steps.meta.outputs.version }}.tgz application/x-gzip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
