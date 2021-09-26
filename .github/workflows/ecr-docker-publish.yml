@@ -119,6 +119,7 @@ jobs:
           REGISTRY: ${{ secrets.ECR_REGISTRY }}/
           NAME: ${{ steps.dotenv.outputs.project_name }}
           HOST: ${{ steps.dotenv.outputs.project_host }}
+          HELM_EXPERIMENTAL_OCI: 1
         run: |
           aws ecr get-login-password \
             --region $AWS_REGION | helm registry login \
@@ -126,7 +127,6 @@ jobs:
             --password-stdin $REGISTRY
           
           chart=charts/$NAME-chart-$VERSION.tgz
-          HELM_EXPERIMENTAL_OCI=1
           helm push $chart oci://$REGISTRY
         
 
