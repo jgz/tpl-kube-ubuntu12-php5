@@ -1,0 +1,142 @@
+name: Publish AWS ECR
+
+# This workflow will upload the image and chart to an a private AWS ECR
+
+# The following secrets must be set up on the projects
+# AWS_ACCESS_KEY_ID
+# AWS_SECRET_ACCESS_KEY
+# ECR_REGISTRY=<aws-account-id>.dkr.ecr.<aws-region>.amazonaws.com
+
+# you also need to create the repo's in ECR for the image and chart.
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+
+      # Load values from release.config
+      # https://github.com/falti/dotenv-action
+      - name: Load Release Config 
+        id: dotenv
+        uses: falti/dotenv-action@v0.2.7
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      # # Login against a Docker registry 
+      # # https://github.com/docker/login-action
+      # - name: Log into registry
+      #   uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      #   with:
+      #     registry: ${{ steps.dotenv.outputs.registry }}
+      #     username: ${{ steps.dotenv.outputs.repo }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@3a3bb3a81753dc99f090d24ee7e5343838b73a96
+        with:
+          images: ${{ secrets.ECR_REGISTRY }}/${{ steps.dotenv.outputs.repo }}/${{ steps.dotenv.outputs.project_name }}
+          tags: |
+            type=semver,pattern={{version}}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image
+        uses: docker/build-push-action@a66e35b9cbcf4ad0ea91ffcaf7bbad63ad9e0229
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Dump env
+        run: env | sort
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+          STEPS: ${{ toJson(steps)}}
+        run: | 
+          echo "$GITHUB_CONTEXT" \
+          echo "$STEPS"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.7.0
+
+      # Update the charts with the values from .env and the current job
+      - name: Package Chart
+        env: 
+          VERSION: ${{ steps.meta.outputs.version }}
+          REPO: ${{ steps.dotenv.outputs.repo }}
+          REGISTRY: ${{ secrets.ECR_REGISTRY }}/
+          NAME: ${{ steps.dotenv.outputs.project_name }}
+          HOST: ${{ steps.dotenv.outputs.project_host }}
+        run: |
+          sed -i "s/PROJECT_NAME/$NAME/g" chart/values.yaml 
+          sed -i "s/REPO/$REPO/g" chart/values.yaml
+          sed -i "s?PROJECT_HOST?$HOST?g" chart/values.yaml
+          sed -i "s?REGISTRY?$REGISTRY?g" chart/values.yaml
+
+          sed -i "s/PROJECT_NAME/$NAME/g" chart/Chart.yaml
+          sed -i "s/RELEASE_VERSION/$VERSION/g" chart/Chart.yaml
+          
+          TMPDIR=/tmp/helm-package/$NAME-chart
+          mkdir -p $TMPDIR
+          mkdir -p charts/
+          cp -r chart/* $TMPDIR
+
+          helm package $TMPDIR -d charts/
+
+
+      - name: Publish Chart to ECR
+        env: 
+          VERSION: ${{ steps.meta.outputs.version }}
+          REPO: ${{ steps.dotenv.outputs.repo }}
+          REGISTRY: ${{ secrets.ECR_REGISTRY }}/
+          NAME: ${{ steps.dotenv.outputs.project_name }}
+          HOST: ${{ steps.dotenv.outputs.project_host }}
+        run: |
+          aws ecr get-login-password \
+            --region <aws-region> | helm registry login \
+            --username AWS \
+            --password-stdin $REGISTRY
+          
+          chart=charts/$NAME-chart-$VERSION.tgz
+          export HELM_EXPERIMENTAL_OCI=1
+          helm push $chart oci://$REGISTRY
+        
+
+      # charts/${{ steps.dotenv.outputs.project_name }}-chart-${{ steps.meta.outputs.version }}.tgz
+
+      # - name: Run chart-releaser
+      #   uses: helm/chart-releaser-action@v1.2.0
+      #   env:
+      #     CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      
+
+          
