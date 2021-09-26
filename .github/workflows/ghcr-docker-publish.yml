@@ -57,7 +57,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          
+
       - name: Dump env
         run: env | sort
       - name: Dump GitHub context
@@ -70,7 +70,7 @@ jobs:
 
       - name: Update Charts
         env: 
-          VERSION: ${{ steps.meta.outputs.labels.org.opencontainers.image.version }}
+          VERSION: ${{ steps.meta.outputs.version }}
           REPO: ${{ steps.dotenv.outputs.repo }}
           REGISTRY: ${{ steps.dotenv.outputs.registry }}/
           NAME: ${{ steps.dotenv.outputs.project_name }}
@@ -85,5 +85,19 @@ jobs:
           sed -i "s/PROJECT_NAME/$NAME/g" chart/Chart.yaml
           sed -i "s/RELEASE_VERSION/$VERSION/g" chart/Chart.yaml
           cat Chart.yaml
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.7.0
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.2.0
+        with:
+          charts_dir: chart
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      
 
           
