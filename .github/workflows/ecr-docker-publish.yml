@@ -59,6 +59,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@3a3bb3a81753dc99f090d24ee7e5343838b73a96
         with:
+          flavor: |
+            latest=false
           images: ${{ secrets.ECR_REGISTRY }}/${{ steps.dotenv.outputs.project_name }}
           tags: |
             type=semver,pattern={{version}}
