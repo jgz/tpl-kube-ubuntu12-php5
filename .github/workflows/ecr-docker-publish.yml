@@ -134,8 +134,8 @@ jobs:
           helm push $chart oci://$REGISTRY
 
           helm plugin install https://github.com/hypnoglow/helm-s3.git
-          helm repo add $HELM_REPO
-          helm s3 push --relative $chart $HELM_REPO
+          helm repo add s3-repo $HELM_REPO
+          helm s3 push --relative $chart s3-repo
 
         
 
