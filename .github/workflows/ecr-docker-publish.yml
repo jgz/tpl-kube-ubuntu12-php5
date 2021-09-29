@@ -6,6 +6,7 @@ name: Publish AWS ECR
 # AWS_ACCESS_KEY_ID
 # AWS_SECRET_ACCESS_KEY
 # ECR_REGISTRY=<aws-account-id>.dkr.ecr.<aws-region>.amazonaws.com
+# S3_HELM_REPO=s3://s3-helm-repo-bucket
 
 # you also need to create the repo's in ECR for the image and chart.
 
@@ -112,13 +113,14 @@ jobs:
           helm package $TMPDIR -d charts/
 
 
-      - name: Publish Chart to ECR
+      - name: Publish Chart to ECR and S3
         env: 
           VERSION: ${{ steps.meta.outputs.version }}
           REPO: ${{ steps.dotenv.outputs.repo }}
           REGISTRY: ${{ secrets.ECR_REGISTRY }}/
           NAME: ${{ steps.dotenv.outputs.project_name }}
           HOST: ${{ steps.dotenv.outputs.project_host }}
+          HELM_REPO: ${{ secrets.S3_HELM_REPO }}
           HELM_EXPERIMENTAL_OCI: 1
         run: |
           aws ecr get-login-password \
@@ -128,6 +130,11 @@ jobs:
           
           chart=charts/$NAME-chart-$VERSION.tgz
           helm push $chart oci://$REGISTRY
+
+          helm plugin install https://github.com/hypnoglow/helm-s3.git
+          helm repo add $HELM_REPO
+          helm s3 push --relative $chart $HELM_REPO
+
         
 
       # charts/${{ steps.dotenv.outputs.project_name }}-chart-${{ steps.meta.outputs.version }}.tgz
