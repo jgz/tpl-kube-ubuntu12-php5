@@ -60,3 +60,11 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create the name of the tls secret for secure port
+*/}}
+{{- define "helm-chart.tlsSecretName" -}}
+{{- $fullname := include "helm-chart.fullname" . -}}
+{{- default (printf "%s-tls" $fullname) .Values.tls.secretName }}
+{{- end }}
