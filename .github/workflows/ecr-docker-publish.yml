@@ -94,7 +94,7 @@ jobs:
       - name: Package Chart
         env: 
           VERSION: ${{ steps.meta.outputs.version }}
-          REPO: ${{ steps.dotenv.outputs.repo }}
+          REPO: ""
           REGISTRY: ${{ secrets.ECR_REGISTRY }}/
           NAME: ${{ steps.dotenv.outputs.project_name }}
           HOST: ${{ steps.dotenv.outputs.project_host }}
@@ -118,7 +118,7 @@ jobs:
       - name: Publish Chart to ECR and S3
         env: 
           VERSION: ${{ steps.meta.outputs.version }}
-          REPO: ${{ steps.dotenv.outputs.repo }}
+          REPO: ""
           REGISTRY: ${{ secrets.ECR_REGISTRY }}/
           NAME: ${{ steps.dotenv.outputs.project_name }}
           HOST: ${{ steps.dotenv.outputs.project_host }}
