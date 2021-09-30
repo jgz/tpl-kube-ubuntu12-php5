@@ -13,7 +13,7 @@
 
 <body>
   <div class="container">
-    <h1>tpl-kube-ubuntu12-php5</h1>
+    <h1>tpl-kube-ubuntu14-php5</h1>
     <p>Project generated from <a href="https://github.com/jgz/tpl-kube-ubuntu14-php5">jgz/tpl-kube-ubuntu14-php5</a>.</p>
     <?php phpinfo() ?>
     <!-- Optional JavaScript -->
