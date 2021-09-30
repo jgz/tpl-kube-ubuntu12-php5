@@ -95,7 +95,7 @@ jobs:
         env: 
           VERSION: ${{ steps.meta.outputs.version }}
           REPO: ""
-          REGISTRY: ${{ secrets.ECR_REGISTRY }}/
+          REGISTRY: ${{ secrets.ECR_REGISTRY }}
           NAME: ${{ steps.dotenv.outputs.project_name }}
           HOST: ${{ steps.dotenv.outputs.project_host }}
         run: |
