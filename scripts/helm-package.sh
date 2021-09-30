@@ -1,6 +1,6 @@
 #!/bin/sh
 . ../release.config
-REGISTRY="$REGISTRY/"
+[[ ! -z "$REGISTRY" ]] && REGISTRY="$REGISTRY/"
 
 TMPDIR=/tmp/helm-package/$PROJECT_NAME
 mkdir -p $TMPDIR
