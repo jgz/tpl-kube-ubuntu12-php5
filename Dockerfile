@@ -12,7 +12,7 @@ RUN apt-get update && \
     php5-mysql 
 # php5-pgsql
 
-COPY src/* /var/www/
+COPY src /var/www
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 COPY entrypoint /entrypoint
 RUN chmod +x /entrypoint
