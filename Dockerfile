@@ -9,8 +9,8 @@ RUN apt-get update && \
     libapache2-mod-php5 \
     php5-gd \
     php5-ldap \
-    php5-mysql \
-    php5-pgsql
+    php5-mysql 
+# php5-pgsql
 
 COPY src/* /var/www/
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
