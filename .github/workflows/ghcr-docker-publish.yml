@@ -27,7 +27,7 @@ jobs:
       # https://github.com/falti/dotenv-action
       - name: Load Release Config 
         id: dotenv
-        uses: falti/dotenv-action@v0.2.7
+        uses: falti/dotenv-action@v0.2.8
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
