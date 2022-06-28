@@ -86,7 +86,7 @@ jobs:
           echo "$STEPS"
 
       - name: Install Helm
-        uses: azure/setup-helm@v1
+        uses: azure/setup-helm@v3
         with:
           version: v3.7.0
 
