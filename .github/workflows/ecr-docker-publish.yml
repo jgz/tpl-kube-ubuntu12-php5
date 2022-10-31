@@ -31,7 +31,7 @@ jobs:
       # https://github.com/falti/dotenv-action
       - name: Load Release Config 
         id: dotenv
-        uses: falti/dotenv-action@v0.2.7
+        uses: falti/dotenv-action@v1.0.1
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
