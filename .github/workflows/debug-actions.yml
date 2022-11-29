@@ -15,7 +15,7 @@ jobs:
       
       - name: Load Config to ENV
         id: dotenv
-        uses: falti/dotenv-action@v0.2.7
+        uses: falti/dotenv-action@v1.0.2
         with:
           log-variables: true
     
